@@ -1,5 +1,7 @@
 # 🔁 MiniSwap
 
+**🌐 Language:** English · [Español](README.es.md)
+
 A minimal **constant-product AMM** (Uniswap-V2 style) built from scratch for a single ERC-20 pair. Provide liquidity to earn LP tokens and a share of the **0.3% swap fee**, or swap one token for the other along the **x · y = k** curve.
 
 > Full-stack portfolio project: Solidity contract (Foundry) + Next.js frontend (wagmi/viem). This builds the *engine* of a DEX — the invariant, LP shares and fee math — not just an integration with an existing one.
