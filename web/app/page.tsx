@@ -68,6 +68,7 @@ export default function Home() {
   const [lp, setLp] = useState<bigint>(ZERO);
   const [totalLp, setTotalLp] = useState<bigint>(ZERO);
   const [busy, setBusy] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   // forms
   const [swapZeroForOne, setSwapZeroForOne] = useState(true);
@@ -80,33 +81,51 @@ export default function Home() {
 
   const refresh = useCallback(async () => {
     if (!publicClient) return;
-    const [r0, r1] = (await publicClient.readContract({
-      address: MINISWAP_ADDRESS,
-      abi: miniSwapAbi,
-      functionName: "getReserves",
-    })) as [bigint, bigint];
-    setReserve0(r0);
-    setReserve1(r1);
-    setTotalLp(
-      (await publicClient.readContract({
-        address: MINISWAP_ADDRESS,
-        abi: miniSwapAbi,
-        functionName: "totalSupply",
-      })) as bigint,
-    );
-    if (address) {
-      const read = (token: `0x${string}`) =>
-        publicClient.readContract({ address: token, abi: tokenAbi, functionName: "balanceOf", args: [address] }) as Promise<bigint>;
-      setBal0(await read(TOKEN0_ADDRESS));
-      setBal1(await read(TOKEN1_ADDRESS));
-      setLp(
-        (await publicClient.readContract({
+    setFailed(false);
+    // Retry with backoff so a cold/flaky RPC doesn't render the pool/balances as empty.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        const [r0, r1] = (await publicClient.readContract({
           address: MINISWAP_ADDRESS,
           abi: miniSwapAbi,
-          functionName: "balanceOf",
-          args: [address],
-        })) as bigint,
-      );
+          functionName: "getReserves",
+        })) as [bigint, bigint];
+        const supply = (await publicClient.readContract({
+          address: MINISWAP_ADDRESS,
+          abi: miniSwapAbi,
+          functionName: "totalSupply",
+        })) as bigint;
+
+        let nextBal0 = ZERO;
+        let nextBal1 = ZERO;
+        let nextLp = ZERO;
+        if (address) {
+          const read = (token: `0x${string}`) =>
+            publicClient.readContract({ address: token, abi: tokenAbi, functionName: "balanceOf", args: [address] }) as Promise<bigint>;
+          nextBal0 = await read(TOKEN0_ADDRESS);
+          nextBal1 = await read(TOKEN1_ADDRESS);
+          nextLp = (await publicClient.readContract({
+            address: MINISWAP_ADDRESS,
+            abi: miniSwapAbi,
+            functionName: "balanceOf",
+            args: [address],
+          })) as bigint;
+        }
+
+        setReserve0(r0);
+        setReserve1(r1);
+        setTotalLp(supply);
+        setBal0(nextBal0);
+        setBal1(nextBal1);
+        setLp(nextLp);
+        return;
+      } catch {
+        if (attempt >= 4) {
+          setFailed(true);
+          return;
+        }
+        await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+      }
     }
   }, [publicClient, address]);
 
@@ -285,6 +304,15 @@ export default function Home() {
             Wrong network.{" "}
             <button onClick={() => switchChain({ chainId: EXPECTED_CHAIN.id })} className="font-semibold underline">
               Switch to {EXPECTED_CHAIN.name}
+            </button>
+          </Banner>
+        )}
+
+        {failed && (
+          <Banner>
+            Couldn&apos;t load pool data — the network may be busy.{" "}
+            <button onClick={refresh} className="font-semibold underline">
+              Retry
             </button>
           </Banner>
         )}
