@@ -74,19 +74,6 @@ web/                      Next.js frontend (App Router): pool stats, swap, add/r
 
 ---
 
-## Run it locally
-
-Needs [Foundry](https://book.getfoundry.sh/) and Node.js.
-
-```bash
-forge test            # run the suite
-forge coverage        # coverage report
-
-cd web && npm install && npm run dev   # http://localhost:3000
-```
-
----
-
 ## Tests
 
 ```
