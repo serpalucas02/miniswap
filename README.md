@@ -10,7 +10,7 @@ A minimal **constant-product AMM** (Uniswap-V2 style) built from scratch for a s
 
 ## Live demo
 
-- 🌐 **App:** https://miniswap-delta.vercel.app
+- 🌐 **App:** https://miniswap-project.vercel.app
 - 📜 **MiniSwap (verified):** [`0x34c2…1CfC`](https://sepolia.etherscan.io/address/0x34c2b149bf5a7783bac817db8ad7b880c5531cfc#code)
 - 🪙 **Test tokens (verified):** [TKA `0x5fAd…a579`](https://sepolia.etherscan.io/address/0x5fadd5c1f2b79dad290ca47a9284046ec8ffa579#code) · [TKB `0x126C…1e43`](https://sepolia.etherscan.io/address/0x126ce9b37c5ca1f7c102d962be2d47be48a31e43#code)
 
