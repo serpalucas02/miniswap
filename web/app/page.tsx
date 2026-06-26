@@ -234,7 +234,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-1 flex-col bg-gradient-to-br from-[#0d0918] via-[#150d2b] to-[#241043] text-slate-100">
-      <header className="flex items-center justify-between px-6 py-4">
+      <header className="flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <span className="text-xl font-bold">
           🔁 <span className="bg-gradient-to-r from-violet-300 to-fuchsia-300 bg-clip-text text-transparent">MiniSwap</span>
         </span>
@@ -255,9 +255,9 @@ export default function Home() {
         )}
       </header>
 
-      <main className="mx-auto w-full max-w-xl flex-1 px-6 py-8">
+      <main className="mx-auto w-full max-w-xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight">
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
             <span className="bg-gradient-to-r from-violet-200 via-fuchsia-200 to-violet-200 bg-clip-text text-transparent">
               A tiny on-chain exchange
             </span>
